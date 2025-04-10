@@ -1,0 +1,367 @@
+{
+  "name": "ur10e_robot",
+  "links": {
+    "base_link_inertia": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/base.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rpy": [
+            0.0,
+            0.0,
+            3.141592653589793
+          ]
+        }
+      }
+    },
+    "shoulder_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/shoulder.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rpy": [
+            0.0,
+            0.0,
+            3.141592653589793
+          ]
+        }
+      }
+    },
+    "upper_arm_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/upperarm.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            0.1762
+          ],
+          "rpy": [
+            1.5707963267948966,
+            0.0,
+            -1.5707963267948966
+          ]
+        }
+      }
+    },
+    "forearm_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/forearm.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            0.0393
+          ],
+          "rpy": [
+            1.5707963267948966,
+            0.0,
+            -1.5707963267948966
+          ]
+        }
+      }
+    },
+    "wrist_1_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/wrist1.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            -0.135
+          ],
+          "rpy": [
+            1.5707963267948966,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "wrist_2_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/wrist2.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            -0.12
+          ],
+          "rpy": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "wrist_3_link": {
+      "visual": {
+        "geometry": {
+          "shape": "mesh",
+          "size": "package://ur_description/meshes/ur10e/visual/wrist3.stl"
+        },
+        "origin": {
+          "xyz": [
+            0.0,
+            0.0,
+            -0.1168
+          ],
+          "rpy": [
+            1.5707963267948966,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    }
+  },
+  "joints": {
+    "base_link-base_link_inertia": {
+      "type": "fixed",
+      "parent": "base_link",
+      "child": "base_link_inertia",
+      "axis": [
+        0,
+        0,
+        0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          3.141592653589793
+        ]
+      }
+    },
+    "shoulder_pan_joint": {
+      "type": "revolute",
+      "parent": "base_link_inertia",
+      "child": "shoulder_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.1807
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "shoulder_lift_joint": {
+      "type": "revolute",
+      "parent": "shoulder_link",
+      "child": "upper_arm_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          1.570796327,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "elbow_joint": {
+      "type": "revolute",
+      "parent": "upper_arm_link",
+      "child": "forearm_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          -0.6127,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "wrist_1_joint": {
+      "type": "revolute",
+      "parent": "forearm_link",
+      "child": "wrist_1_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          -0.57155,
+          0.0,
+          0.17415
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "wrist_2_joint": {
+      "type": "revolute",
+      "parent": "wrist_1_link",
+      "child": "wrist_2_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          -0.11985,
+          -2.458164590756244e-11
+        ],
+        "rpy": [
+          1.570796327,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "wrist_3_joint": {
+      "type": "revolute",
+      "parent": "wrist_2_link",
+      "child": "wrist_3_link",
+      "axis": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.11655,
+          -2.390480459346185e-11
+        ],
+        "rpy": [
+          1.570796326589793,
+          3.141592653589793,
+          3.141592653589793
+        ]
+      }
+    },
+    "base_link-base_fixed_joint": {
+      "type": "fixed",
+      "parent": "base_link",
+      "child": "base",
+      "axis": [
+        0,
+        0,
+        0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          3.141592653589793
+        ]
+      }
+    },
+    "wrist_3-flange": {
+      "type": "fixed",
+      "parent": "wrist_3_link",
+      "child": "flange",
+      "axis": [
+        0,
+        0,
+        0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          -1.5707963267948966,
+          -1.5707963267948966
+        ]
+      }
+    },
+    "flange-tool0": {
+      "type": "fixed",
+      "parent": "flange",
+      "child": "tool0",
+      "axis": [
+        0,
+        0,
+        0
+      ],
+      "origin": {
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          1.5707963267948966,
+          0.0,
+          1.5707963267948966
+        ]
+      }
+    }
+  }
+}

@@ -1,5 +1,8 @@
 ﻿using Rhino;
+using Rhino.PlugIns;
+using Rhino.UI;
 using System;
+using System.Drawing;
 
 namespace VOLTtools
 {
@@ -21,8 +24,18 @@ namespace VOLTtools
         ///<summary>Gets the only instance of the VOLTtoolsPlugin plug-in.</summary>
         public static VOLTtoolsPlugin Instance { get; private set; }
 
-        // You can override methods here to change the plug-in behavior on
-        // loading and shut down, add options pages to the Rhino _Option command
-        // and maintain plug-in wide options in a document.
+        protected override LoadReturnCode OnLoad(ref string errorMessage)
+        {
+            try
+            {
+                Panels.RegisterPanel(this, typeof(URSimPanel), "UR10e Simulator", null);
+                return LoadReturnCode.Success;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.ToString();
+                return LoadReturnCode.ErrorShowDialog;
+            }
+        }
     }
 }

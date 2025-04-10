@@ -1,23 +1,28 @@
 ﻿// URSimPanel.cs
-using Eto.Forms;
-using Eto.Drawing;
-using System.Linq;
-using Rhino;
-using Rhino.Input.Custom;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Eto.Forms;
+using Rhino;
+using Rhino.Commands;
+using Rhino.Geometry;
+using Rhino.Input;
+using Rhino.Input.Custom;
+using Rhino.UI;
+using System.Runtime.InteropServices;
 
-public class URSimPanel : Dialog
+[Guid("B7CBE031-8DA7-4A41-83D5-939A328C9F14")]
+public class URSimPanel : Panel
 {
     private List<Slider> sliders = new List<Slider>();
 
     public URSimPanel()
     {
-        Title = "UR10e Control Panel";
-        ClientSize = new Size(300, 450);
-        this.WindowStyle = WindowStyle.Utility;
-        this.Resizable = false;
-
         var layout = new StackLayout { Padding = 10 };
+
+        var model = URDFLoader.LoadFromJson("C:\\Users\\Chris\\source\\repos\\VOLTtools\\VOLTtools\\Resources\\ur_description\\urdf\\ur10e.json");
+        SimManager.RobotModel = model;
+        SimManager.Robot = new SimRobot(model);
 
         for (int i = 0; i < 6; i++)
         {
@@ -37,13 +42,25 @@ public class URSimPanel : Dialog
         layout.Items.Add(simulateButton);
         layout.Items.Add(targetButton);
         Content = layout;
+
     }
 
     private void UpdateVisualization()
     {
-        double[] angles = sliders.Select(sl => Rhino.RhinoMath.ToRadians(sl.Value)).ToArray();
-        var fk = UR10eKinematics.ComputeFK(angles);
-        URVisualizer.DrawRobot(fk);
+        double[] angles = sliders.Select(sl => RhinoMath.ToRadians(sl.Value)).ToArray();
+
+        var jointAngles = new Dictionary<string, float>
+    {
+        { "shoulder_pan_joint", (float)angles[0] },
+        { "shoulder_lift_joint", (float)angles[1] },
+        { "elbow_joint", (float)angles[2] },
+        { "wrist_1_joint", (float)angles[3] },
+        { "wrist_2_joint", (float)angles[4] },
+        { "wrist_3_joint", (float)angles[5] }
+    };
+
+        var transforms = FKEngine.ComputeFK(SimManager.RobotModel, jointAngles, "base_link");
+        SimManager.Robot.Update(transforms);
     }
 
     private void PickTarget()
@@ -52,19 +69,15 @@ public class URSimPanel : Dialog
         gp.SetCommandPrompt("Pick target position for TCP");
         gp.Get();
 
-        if (gp.CommandResult() == Rhino.Commands.Result.Success)
+        if (gp.CommandResult() == Result.Success)
         {
             var target = gp.Point();
-            var solution = UR10eKinematics.SolvePositionIK(target);
-            if (solution != null)
-            {
-                var fk = UR10eKinematics.ComputeFK(solution);
-                URVisualizer.DrawRobot(fk);
-            }
-            else
-            {
-                RhinoApp.WriteLine("Target unreachable.");
-            }
+            RhinoApp.WriteLine($"Target picked: {target}");
+
+            // Stub: Replace this with your IK logic if available
+            RhinoApp.WriteLine("IK solver not yet integrated with RobotModel.");
         }
     }
 }
+
+
