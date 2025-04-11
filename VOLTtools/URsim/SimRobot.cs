@@ -18,6 +18,23 @@ public class SimRobot
     {
         _model = model;
 
+        if (_model == null)
+        {
+            RhinoApp.WriteLine("❌ SimRobot: RobotModel is null");
+            return;
+        }
+
+        if (_model.Links == null)
+        {
+            RhinoApp.WriteLine("❌ SimRobot: RobotModel.Links is null");
+            return;
+        }
+
+        if (_model.Joints == null)
+        {
+            RhinoApp.WriteLine("❌ SimRobot: RobotModel.Joints is null");
+            return;
+        }
         // Initialize mesh instances
         foreach (var link in _model.Links)
         {

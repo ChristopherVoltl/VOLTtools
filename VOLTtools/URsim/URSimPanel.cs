@@ -15,14 +15,28 @@ using System.Runtime.InteropServices;
 public class URSimPanel : Panel
 {
     private List<Slider> sliders = new List<Slider>();
+    
+    private DropDown toolSelector;
+    private string SelectedTool => toolSelector.SelectedValue as string ?? "tool0";
 
     public URSimPanel()
     {
         var layout = new StackLayout { Padding = 10 };
 
-        var model = URDFLoader.LoadFromJson("C:\\Users\\Chris\\source\\repos\\VOLTtools\\VOLTtools\\Resources\\ur_description\\urdf\\ur10e.json");
-        SimManager.RobotModel = model;
-        SimManager.Robot = new SimRobot(model);
+        RhinoApp.WriteLine("🧩 URSimPanel constructor called");
+
+        SimManager.EnsureLoaded();
+
+        toolSelector = new DropDown
+        {
+            Width = 100,
+            DataStore = new[] { "tool0", "flange", "wrist_3_link" },
+            SelectedIndex = 0
+        };
+
+        layout.Items.Add(new Label { Text = "Select Tool Frame:" });
+        layout.Items.Add(toolSelector);
+
 
         for (int i = 0; i < 6; i++)
         {
@@ -44,6 +58,7 @@ public class URSimPanel : Panel
         Content = layout;
 
     }
+
 
     private void UpdateVisualization()
     {
@@ -69,15 +84,48 @@ public class URSimPanel : Panel
         gp.SetCommandPrompt("Pick target position for TCP");
         gp.Get();
 
-        if (gp.CommandResult() == Result.Success)
-        {
-            var target = gp.Point();
-            RhinoApp.WriteLine($"Target picked: {target}");
+        if (gp.CommandResult() != Result.Success)
+            return;
 
-            // Stub: Replace this with your IK logic if available
-            RhinoApp.WriteLine("IK solver not yet integrated with RobotModel.");
+        var target = gp.Point();
+        RhinoApp.WriteLine($"Target picked: {target}");
+
+        float[] initial = sliders.Select(sl => (float)RhinoMath.ToRadians(sl.Value)).ToArray();
+        var initialGuess = sliders.Select(sl => (float)RhinoMath.ToRadians(sl.Value)).ToArray();
+
+        var solution = IKSolver.SolveIK(
+                     SimManager.RobotModel,
+                     "base_link",
+                     SelectedTool,
+                     target,
+                     initialGuess);
+
+
+        if (solution != null)
+        {
+            for (int i = 0; i < sliders.Count; i++)
+                sliders[i].Value = (int)RhinoMath.ToDegrees(solution[i]);
+
+            var jointAngles = new Dictionary<string, float>
+        {
+            { "shoulder_pan_joint", solution[0] },
+            { "shoulder_lift_joint", solution[1] },
+            { "elbow_joint", solution[2] },
+            { "wrist_1_joint", solution[3] },
+            { "wrist_2_joint", solution[4] },
+            { "wrist_3_joint", solution[5] },
+        };
+
+            var transforms = FKEngine.ComputeFK(SimManager.RobotModel, jointAngles, "base_link");
+            SimManager.Robot.Update(transforms);
         }
+        else
+        {
+            RhinoApp.WriteLine("Target unreachable or IK failed to converge.");
+        }
+        RhinoDoc.ActiveDoc.Objects.AddPoint(target);
     }
+
 }
 
 

@@ -28,16 +28,7 @@ namespace VOLTtools
         {
             try
             {
-                var model = URDFLoader.LoadFromJson("C:\\Users\\Chris\\source\\repos\\VOLTtools\\VOLTtools\\Resources\\ur_description\\urdf\\ur10e.json");
-                var simRobot = new SimRobot(model);
-
-                SimManager.Robot = simRobot;
-
-                if (model == null)
-                {
-                    RhinoApp.WriteLine("Model is null!");
-                    return Result.Failure;
-                }
+                SimManager.EnsureLoaded();
 
                 var jointValues = new Dictionary<string, float>
                 {
@@ -49,9 +40,9 @@ namespace VOLTtools
                     { "wrist_3_joint", 0 }
                 };
 
-                var transforms = FKEngine.ComputeFK(model, jointValues, "base_link");
-                //FKEngine.DrawRobot(model, transforms);
-                simRobot.Update(transforms);
+                
+                var transforms = FKEngine.ComputeFK(SimManager.RobotModel, jointValues, "base_link");
+                SimManager.Robot.Update(transforms);
                 return Result.Success;
             }
             catch (Exception ex)
