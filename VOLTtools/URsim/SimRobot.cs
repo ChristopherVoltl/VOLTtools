@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Grasshopper.Kernel.Types.Transforms;
 using Rhino;
 using Rhino.Geometry;
@@ -9,7 +10,7 @@ public class SimRobot
     private readonly RobotModel _model;
     private readonly Dictionary<string, Guid> _linkMeshIds = new Dictionary<string, Guid>();
     private readonly Dictionary<string, Transform> _visualOffsets = new Dictionary<string, Transform>();
-
+    private Dictionary<string, float> _currentJointAngles;
     private readonly Dictionary<string, Mesh> _originalMeshes = new Dictionary<string, Mesh>();
 
 
@@ -20,19 +21,19 @@ public class SimRobot
 
         if (_model == null)
         {
-            RhinoApp.WriteLine("❌ SimRobot: RobotModel is null");
+            RhinoApp.WriteLine("SimRobot: RobotModel is null");
             return;
         }
 
         if (_model.Links == null)
         {
-            RhinoApp.WriteLine("❌ SimRobot: RobotModel.Links is null");
+            RhinoApp.WriteLine("SimRobot: RobotModel.Links is null");
             return;
         }
 
         if (_model.Joints == null)
         {
-            RhinoApp.WriteLine("❌ SimRobot: RobotModel.Joints is null");
+            RhinoApp.WriteLine("SimRobot: RobotModel.Joints is null");
             return;
         }
         // Initialize mesh instances
@@ -59,7 +60,7 @@ public class SimRobot
         }
     }
 
-    public void Update(Dictionary<string, Transform> fkTransforms)
+    public void Update(Dictionary<string, Transform> fkTransforms, Dictionary<string, float> jointAngles = null)
     {
         foreach (var kvp in _linkMeshIds)
         {
@@ -69,6 +70,13 @@ public class SimRobot
             if (!fkTransforms.TryGetValue(linkName, out var fk)) continue;
             if (!_visualOffsets.TryGetValue(linkName, out var visual)) continue;
             if (!_originalMeshes.TryGetValue(linkName, out var original)) continue;
+
+            if (fkTransforms.TryGetValue(linkName, out Transform xform))
+            {
+                RhinoDoc.ActiveDoc.Objects.Transform(objId, xform, true);
+            }
+            if (jointAngles != null)
+                _currentJointAngles = new Dictionary<string, float>(jointAngles);
 
             // Delete existing mesh
             RhinoDoc.ActiveDoc.Objects.Delete(objId, true);
@@ -83,5 +91,13 @@ public class SimRobot
         }
 
         RhinoDoc.ActiveDoc.Views.Redraw();
+    }
+
+    public Dictionary<string, float> GetCurrentJointAngles()
+    {
+        // Return the last-known joint configuration
+        return _currentJointAngles != null
+            ? new Dictionary<string, float>(_currentJointAngles)
+            : new Dictionary<string, float>();
     }
 }

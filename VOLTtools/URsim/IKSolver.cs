@@ -1,8 +1,5 @@
 ﻿// Damped Least Squares Inverse Kinematics Solver for UR10e
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using Rhino;
 using Rhino.Geometry;
 
@@ -34,7 +31,7 @@ public static class IKSolver
 
             if (error.Length < threshold)
             {
-                RhinoApp.WriteLine($"✅ Converged in {iter} iterations.");
+                RhinoApp.WriteLine($"Converged in {iter} iterations.");
                 return angles;
             }
 
@@ -74,7 +71,7 @@ public static class IKSolver
             bool success = inv.Invert(.001);
             if (!success)
             {
-                RhinoApp.WriteLine("❌ Failed to invert matrix.");
+                RhinoApp.WriteLine("Failed to invert matrix.");
                 return null;
             }
             Matrix errorVec = new Matrix(3, 1);
@@ -90,7 +87,7 @@ public static class IKSolver
             RhinoApp.WriteLine($"[IK] Iter {iter}: Error = {error.Length:0.0000}");
         }
 
-        RhinoApp.WriteLine("❌ IK failed to converge.");
+        RhinoApp.WriteLine("IK failed to converge.");
         return null;
     }
 }

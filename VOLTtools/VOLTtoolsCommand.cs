@@ -3,6 +3,7 @@ using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
+using Rhino.PlugIns;
 using Rhino.UI;
 using System;
 using System.Collections.Generic;
@@ -52,4 +53,14 @@ namespace VOLTtools
             }
         }
     }
+    public class ShowCurveAnimatorPanelCommand : Command
+    {
+        public override string EnglishName => "ShowCurveAnimatorPanel";
+
+        protected override Result RunCommand(RhinoDoc doc, RunMode mode)
+        {
+            Panels.OpenPanel(typeof(CurvePathAnimatorPanel).GUID);
+            return Result.Success;
+        }
+    } 
 }

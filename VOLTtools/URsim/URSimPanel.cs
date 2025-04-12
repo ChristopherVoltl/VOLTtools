@@ -23,7 +23,7 @@ public class URSimPanel : Panel
     {
         var layout = new StackLayout { Padding = 10 };
 
-        RhinoApp.WriteLine("🧩 URSimPanel constructor called");
+        RhinoApp.WriteLine("URSimPanel constructor called");
 
         SimManager.EnsureLoaded();
 
@@ -32,6 +32,12 @@ public class URSimPanel : Panel
             Width = 100,
             DataStore = new[] { "tool0", "flange", "wrist_3_link" },
             SelectedIndex = 0
+        };
+
+        SimManager.SelectedTool = toolSelector.SelectedValue?.ToString(); 
+        toolSelector.SelectedValueChanged += (s, e) =>
+        {
+            SimManager.SelectedTool = toolSelector.SelectedValue?.ToString();
         };
 
         layout.Items.Add(new Label { Text = "Select Tool Frame:" });

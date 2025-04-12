@@ -26,9 +26,11 @@ namespace VOLTtools
 
         protected override LoadReturnCode OnLoad(ref string errorMessage)
         {
+
             try
             {
                 Panels.RegisterPanel(this, typeof(URSimPanel), "UR10e Simulator", null);
+                Panels.RegisterPanel(this, typeof(CurvePathAnimatorPanel), "Curve Animator", null);
                 return LoadReturnCode.Success;
             }
             catch (Exception ex)
@@ -36,6 +38,9 @@ namespace VOLTtools
                 errorMessage = ex.ToString();
                 return LoadReturnCode.ErrorShowDialog;
             }
+          
+            
+
         }
     }
 }
