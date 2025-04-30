@@ -64,11 +64,11 @@ public static class URDFLoader
 {
     public static RobotModel LoadFromJson(string path)
     {
-        RhinoApp.WriteLine($"📂 Attempting to load JSON from: {path}");
+        RhinoApp.WriteLine($"Attempting to load JSON from: {path}");
 
         if (!File.Exists(path))
         {
-            RhinoApp.WriteLine("❌ File does not exist.");
+            RhinoApp.WriteLine("File does not exist.");
             return null;
         }
 
@@ -90,17 +90,17 @@ public static class URDFLoader
 
         if (model == null)
         {
-            RhinoApp.WriteLine("❌ Deserialization returned null.");
+            RhinoApp.WriteLine("Deserialization returned null.");
             return null;
         }
 
         if (model.Joints == null)
         {
-            RhinoApp.WriteLine("❌ RobotModel.Joints is null.");
+            RhinoApp.WriteLine("RobotModel.Joints is null.");
         }
         else
         {
-            RhinoApp.WriteLine($"✅ Loaded {model.Joints.Count} joints.");
+            RhinoApp.WriteLine($"Loaded {model.Joints.Count} joints.");
         }
 
         foreach (var kvp in model.Joints)
@@ -112,7 +112,7 @@ public static class URDFLoader
         {
             if (joint.Axis == null || joint.Axis.Length != 3)
             {
-                RhinoApp.WriteLine($"❌ Joint {joint.Name} has invalid axis.");
+                RhinoApp.WriteLine($"Joint {joint.Name} has invalid axis.");
                 joint.Axis = new float[] { 0, 0, 1 }; // or proper value
             }
         }
